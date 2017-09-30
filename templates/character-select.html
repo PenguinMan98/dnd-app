@@ -1,0 +1,27 @@
+<html>
+<head>
+
+    <style>
+        button{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<section class="hero">
+    <h1>Choose a Character</h1>
+    <button data-char="0">New</button>
+    <button data-char="1">Cealinor Ferush</button>
+    <button data-char="2">Fimron Shilto</button>
+    <button data-char="8">Tek Croon</button>
+</section>
+<script>
+    var buttons = document.querySelectorAll('button');
+    for(var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', (event) => {
+            console.log(event.target.dataset.char);
+        });
+    }
+</script>
+</body>
+</html>

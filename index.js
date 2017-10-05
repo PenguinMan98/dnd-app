@@ -1,5 +1,9 @@
 const electron = require('electron');
-const { app, BrowserWindow, Menu } = electron;
+const { app, BrowserWindow, Menu, ipcMain } = electron;
+const Gun = require('gun');
+const localData = new Gun();
+const Character = require('./objects/Character.js');
+let currentCharacter = null;
 
 let windows = {
   'characterSelect': {},
@@ -18,8 +22,15 @@ app.on('ready', () => {
       title: 'Choose a Character'
     });
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
+    windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
   }
 });
+
+// SNIPPETS
+// ipcMain.on('thing:action', (event, data) => {
+//   console.log('I got data:',data);
+// });
+// windows.characterSelect.window.send('thing:action',{});
 
 // function createNewWindow( type, title){
 //   winType = typeof type === 'Object' ? type : BrowserWindow;
@@ -33,7 +44,6 @@ app.on('ready', () => {
 //   }
 // }
 
-// SNIPPETS
 // app.on('ready', () => {
 //   //mainWindow = new BrowserWindow({});
 //   //mainWindow.loadURL(`file://${__dirname}/templates/index.html`);

@@ -5,39 +5,38 @@
         button{
             display: block;
         }
-        form > input{
-            display: inline-block;
-        }
-        form > button{
-            display: inline-block;
-        }
-    </style>
+     </style>
 </head>
 <body>
 <section>
     <h1>Choose a Character</h1>
-    <div>
-        <form>
-            <input autofocus><button type="submit">+</button>
-        </form>
-    </div>
+    <button data-char="0">Create a New Character</button>
     <button data-char="1">Cealinor Ferush</button>
     <button data-char="2">Fimron Shilto</button>
     <button data-char="8">Tek Croon</button>
 </section>
 <script>
+    const electron = require('electron');
+    const { ipcRenderer } = electron;
+
     // handle selecting an existing character
     var buttons = document.querySelectorAll('section > button');
     for(var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener('click', (event) => {
             console.log(event.target.dataset.char);
+            if(event.target.dataset.char == 0){
+                ipcRenderer.send('character:new',{});
+            }else{
+                ipcRenderer.send('character:load',{'cId':event.target.dataset.char});
+            }
         });
     }
-    // handle creating a new one
-    document.querySelector('form').addEventListener('submit',(event) =>{
-        event.preventDefault();
-        let name = document.querySelector('input').value;
-    })
+
+    // snippets
+//    ipcRenderer.send('character:add', name);
+//    ipcRenderer.on('thing:action', (event, data) => {
+//        console.log('I got data:', data);
+//    });
 </script>
 </body>
 </html>

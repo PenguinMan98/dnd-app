@@ -1,0 +1,63 @@
+<html>
+<head>
+    <style>
+        header{
+            display: block;
+            text-align: center;
+            background-color: black;
+        }
+        header h1{
+            display: block;
+            font-size: 30px;
+            line-height: 34px;
+            color: white;
+        }
+        header p{
+            display: block;
+            font-size: 16px;
+            line-height: 20px;
+            color: #eee;
+        }
+        input#filter{
+            display: block;
+            width: 80%;
+            margin: 0px auto;
+            font-size: 16px;
+            line-height: 20px;
+            padding: 0 .5rem;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>This is my DND App!</h1>
+    <p>Thank you for putting up with me</p>
+</header>
+<section class="filter">
+    <input id="filter" />
+</section>
+<script>
+    const electron = require('electron');
+    const { ipcRenderer, remote } = electron;
+    console.log(remote.getCurrentWindow());
+    let character;
+
+    // handle filtering
+    var filter = document.getElementById('filter');
+    filter.addEventListener('change', (event) => {
+        console.log('Filtering by', event.target.value );
+    });
+
+    ipcRenderer.on('character:load', (event, data) => {
+        character = data.character;
+        console.log('I got my character:', character);
+    });
+
+    // snippets
+//    ipcRenderer.send('character:add', name);
+//    ipcRenderer.on('thing:action', (event, data) => {
+//        console.log('I got data:', data);
+//    });
+</script>
+</body>
+</html>

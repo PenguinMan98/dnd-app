@@ -17,7 +17,7 @@
 </section>
 <script>
     const electron = require('electron');
-    const { ipcRenderer } = electron;
+    const { ipcRenderer, remote } = electron;
 
     // handle selecting an existing character
     var buttons = document.querySelectorAll('section > button');
@@ -29,6 +29,8 @@
             }else{
                 ipcRenderer.send('character:load',{'cId':event.target.dataset.char});
             }
+            var window = remote.getCurrentWindow();
+            window.close();
         });
     }
 

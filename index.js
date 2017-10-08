@@ -24,7 +24,44 @@ app.on('ready', () => {
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
     windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
   }
+  // boot up the quick reference window. This is the main window of the app. If this one is closed, exit the app.
+  if( typeof windows.quickReference.window === 'undefined' ) {
+    windows.quickReference.window = new BrowserWindow({
+      width: 300,
+      height: 200,
+      title: 'Quick Reference'
+    });
+    windows.quickReference.window.loadURL(`file://${__dirname}/templates/quick-reference.html`);
+    windows.quickReference.window.on('closed',() => windows.quickReference.window = null );
+    windows.quickReference.window.hide(); // start it up hidden
+  }
 });
+
+// ===== UI EVENTS =====
+
+// catch a new character creation event.
+ipcMain.on('character:new', () => {
+  console.log('building new character');
+  currentCharacter = new Character(null, (character) => {
+    console.log('new character callback',character);
+    loadCharacter(character);
+  });
+});
+// catch a load character event
+ipcMain.on('character:load',(event, data) => {
+  console.log('building character from id', data.cId);
+  currentCharacter = new Character(data.cId, (character) => {
+    console.log('new character callback',character);
+    loadCharacter(character);
+  });
+});
+
+let loadCharacter = function( character ){
+  console.log('loading quick reference with character', character);
+  //windows.quickReference.character = character;
+  windows.quickReference.window.send('character:load',{'character': character});
+  windows.quickReference.window.show();
+};
 
 // SNIPPETS
 // ipcMain.on('thing:action', (event, data) => {

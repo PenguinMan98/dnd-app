@@ -30,7 +30,8 @@
                 ipcRenderer.send('character:load',{'cId':event.target.dataset.char});
             }
             var window = remote.getCurrentWindow();
-            window.close();
+            //window.close();
+            window.hide();
         });
     }
 

@@ -70,7 +70,8 @@ let popCharacterSelect = function(){
       title: 'Choose a Character'
     });
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
-    windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
+    //windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
+    windows.characterSelect.window.on('closed',() => windows.characterSelect.window.hide() );
   }else{
     windows.characterSelect.window.show();
   }

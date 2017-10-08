@@ -49,20 +49,19 @@ ipcMain.on('character:new', () => {
 });
 
 // catch a load character event
-// ipcMain.on('character:load',(event, data) => {
-//   console.log('building character from id', data.cId);
-//   currentCharacter = new Character(data.cId, (character) => {
-//     console.log('new character callback',character);
-//     loadCharacter(character);
-//   });
-// });
+ipcMain.on('character:load',(event, data) => {
+  console.log('building character from id', data.cId);
+  currentCharacter = new Character(data.cId, (character) => {
+    console.log('new character callback',character);
+    loadCharacter(character);
+  });
+});
 
-// let loadCharacter = function( character ){
-//   console.log('loading quick reference with character', character);
-//   //windows.quickReference.character = character;
-//   windows.quickReference.window.send('character:load',{'character': character});
-//   windows.quickReference.window.show();
-// };
+let loadCharacter = function( character ){
+  console.log('loading quick reference with character', character);
+  windows.quickReference.window.send('character:load',{'character': character});
+  windows.quickReference.window.show();
+};
 
 // SNIPPETS
 // ipcMain.on('thing:action', (event, data) => {

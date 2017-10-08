@@ -47,16 +47,16 @@
 //        console.log('Filtering by', event.target.value );
 //    });
 
-//    ipcRenderer.on('character:load', (event, data) => {
-//        character = data.character;
-//        console.log('I got my character:', character);
-//    });
+    ipcRenderer.on('character:load', (event, data) => {
+        character = data.character;
+        console.log('I got my character:', character);
+    });
 
-    // snippets
-//    ipcRenderer.send('character:add', name);
-//    ipcRenderer.on('thing:action', (event, data) => {
-//        console.log('I got data:', data);
-//    });
+//     snippets
+    ipcRenderer.send('character:add', name);
+    ipcRenderer.on('thing:action', (event, data) => {
+        console.log('I got data:', data);
+    });
 </script>
 </body>
 </html>

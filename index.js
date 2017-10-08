@@ -18,7 +18,7 @@ app.on('ready', () => {
   if( typeof windows.characterSelect.window === 'undefined' ) {
     windows.characterSelect.window = new BrowserWindow({
       width: 300,
-      height: 200,
+      height: 400,
       title: 'Choose a Character'
     });
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
@@ -27,8 +27,8 @@ app.on('ready', () => {
   // boot up the quick reference window. This is the main window of the app. If this one is closed, exit the app.
   if( typeof windows.quickReference.window === 'undefined' ) {
     windows.quickReference.window = new BrowserWindow({
-      width: 300,
-      height: 200,
+      width: 600,
+      height: 400,
       title: 'Quick Reference'
     });
     windows.quickReference.window.loadURL(`file://${__dirname}/templates/quick-reference.html`);
@@ -61,7 +61,58 @@ let loadCharacter = function( character ){
   console.log('loading quick reference with character', character);
   windows.quickReference.window.send('character:load',{'character': character});
   windows.quickReference.window.show();
+  // these lines build the menu template
+  const mainMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(mainMenu);
 };
+
+// basic menu
+const menuTemplate = [
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Open Characters',
+        click(){
+          if( typeof windows.characterSelect.window === 'undefined' ) {
+            windows.characterSelect.window = new BrowserWindow({
+              width: 300,
+              height: 400,
+              title: 'Choose a Character'
+            });
+            windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
+            windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
+          }
+        }
+      },
+      {
+        label: 'Quit',
+        accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+        click() {
+          app.quit();
+        }
+      }
+    ]
+  }
+];
+// mac fix
+if( process.platform === 'darwin'){
+  menuTemplate.unshift({});
+}
+// dev only
+if( process.env.NODE_ENV !== 'production'){
+  menuTemplate.push({
+    label:'Dev',
+    submenu:[
+      {
+        label: 'Open Dev Tools',
+        click(item, focusedWindow){
+          focusedWindow.toggleDevTools();
+        }
+      }
+    ]
+  })
+}
 
 // SNIPPETS
 // ipcMain.on('thing:action', (event, data) => {

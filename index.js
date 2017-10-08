@@ -15,15 +15,7 @@ let windows = {
 app.on('ready', () => {
   // First, bootstrap the app
   // then open up a character selection window.
-  if( typeof windows.characterSelect.window === 'undefined' ) {
-    windows.characterSelect.window = new BrowserWindow({
-      width: 300,
-      height: 400,
-      title: 'Choose a Character'
-    });
-    windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
-    windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
-  }
+  popCharacterSelect();
   // boot up the quick reference window. This is the main window of the app. If this one is closed, exit the app.
   if( typeof windows.quickReference.window === 'undefined' ) {
     windows.quickReference.window = new BrowserWindow({
@@ -36,6 +28,7 @@ app.on('ready', () => {
     windows.quickReference.window.hide(); // start it up hidden
   }
 });
+
 
 // ===== UI EVENTS =====
 
@@ -57,6 +50,8 @@ ipcMain.on('character:load',(event, data) => {
   });
 });
 
+// ===== Helper Functions =====
+
 let loadCharacter = function( character ){
   console.log('loading quick reference with character', character);
   windows.quickReference.window.send('character:load',{'character': character});
@@ -64,6 +59,21 @@ let loadCharacter = function( character ){
   // these lines build the menu template
   const mainMenu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(mainMenu);
+};
+
+let popCharacterSelect = function(){
+  console.log(typeof windows.characterSelect.window);
+  if( typeof windows.characterSelect.window === 'undefined' || !windows.characterSelect.window ) {
+    windows.characterSelect.window = new BrowserWindow({
+      width: 300,
+      height: 400,
+      title: 'Choose a Character'
+    });
+    windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
+    windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
+  }else{
+    windows.characterSelect.window.show();
+  }
 };
 
 // basic menu
@@ -74,15 +84,7 @@ const menuTemplate = [
       {
         label: 'Open Characters',
         click(){
-          if( typeof windows.characterSelect.window === 'undefined' ) {
-            windows.characterSelect.window = new BrowserWindow({
-              width: 300,
-              height: 400,
-              title: 'Choose a Character'
-            });
-            windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
-            windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
-          }
+          popCharacterSelect();
         }
       },
       {

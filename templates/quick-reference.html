@@ -34,6 +34,7 @@
     <p>Thank you for putting up with me</p>
 </header>
 <section class="filter">
+    <h1></h1>
     <input id="filter" />
 </section>
 <script>
@@ -50,13 +51,14 @@
     ipcRenderer.on('character:load', (event, data) => {
         character = data.character;
         console.log('I got my character:', character);
+        document.querySelector('section.filter > h1').innerHTML = character.name;
     });
 
 //     snippets
-    ipcRenderer.send('character:add', name);
-    ipcRenderer.on('thing:action', (event, data) => {
-        console.log('I got data:', data);
-    });
+//    ipcRenderer.send('character:add', name);
+//    ipcRenderer.on('thing:action', (event, data) => {
+//        console.log('I got data:', data);
+//    });
 </script>
 </body>
 </html>

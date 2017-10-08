@@ -21,10 +21,11 @@ app.on('ready', () => {
     windows.quickReference.window = new BrowserWindow({
       width: 600,
       height: 400,
-      title: 'Quick Reference'
+      title: 'Quick Reference',
+      frame: true
     });
     windows.quickReference.window.loadURL(`file://${__dirname}/templates/quick-reference.html`);
-    windows.quickReference.window.on('closed',() => { windows.quickReference.window = null; app.quit(); } );
+    windows.quickReference.window.on('closed',() => { windows.quickReference.window = null; appClose(); } );
     windows.quickReference.window.hide(); // start it up hidden
   }
 });
@@ -67,14 +68,22 @@ let popCharacterSelect = function(){
     windows.characterSelect.window = new BrowserWindow({
       width: 300,
       height: 400,
-      title: 'Choose a Character'
+      title: 'Choose a Character',
+      frame: false
     });
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
-    //windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
-    windows.characterSelect.window.on('closed',() => windows.characterSelect.window.hide() );
+    windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
+    //windows.characterSelect.window.on('closed',() => windows.characterSelect.window.hide() );
   }else{
     windows.characterSelect.window.show();
   }
+};
+
+let appClose = function(){
+  for(let i in windows){
+    windows[i].window = null;
+  }
+  app.quit();
 };
 
 // basic menu
@@ -84,6 +93,7 @@ const menuTemplate = [
     submenu: [
       {
         label: 'Open Characters',
+        accelerator: process.platform === 'darwin' ? 'Command+S' : 'Ctrl+S',
         click(){
           popCharacterSelect();
         }

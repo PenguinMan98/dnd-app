@@ -8,9 +8,10 @@ class Character{
   constructor( cId, callback ) {
     console.log('character being created',cId);
     // fetch the character from Gun
-    characters.get(cId).on( (character, key) => {
-      console.log('gun returns:',character,key);
-      character.id = key;
+    characters.get(cId).get( (result) => {
+      let character = result.put;
+      console.log('gun returns:',character,result.get);
+      character.id = result.get;
       this.buildCharacter(character, callback);
     });
   }

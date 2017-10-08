@@ -10,7 +10,7 @@
 <body>
 <section>
     <h1>Choose a Character</h1>
-    <button data-char="0">Create a New Character</button>
+    <!--<button data-char="0">Create a New Character</button>-->
     <button data-char="1">Cealinor Ferush</button>
     <button data-char="2">Fimron Shilto</button>
     <button data-char="8">Tek Croon</button>
@@ -30,8 +30,8 @@
                 ipcRenderer.send('character:load',{'cId':event.target.dataset.char});
             }
             var window = remote.getCurrentWindow();
-            //window.close();
-            window.hide();
+            window.close();
+            //window.hide();
         });
     }
 

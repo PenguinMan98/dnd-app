@@ -1,8 +1,12 @@
+const Path = require('path');
 const electron = require('electron');
-const { app, BrowserWindow, Menu, ipcMain } = electron;
+const { app, BrowserWindow, Menu, ipcMain, Tray } = electron;
 const Gun = require('gun');
 const localData = new Gun();
 const Character = require('./objects/Character.js');
+
+const isMac = process.platform === 'darwin';
+const isWin = process.platform === 'win32';
 let currentCharacter = null;
 
 let windows = {
@@ -11,9 +15,23 @@ let windows = {
   'description': {},
   'mainStats': {}
 };
+//let tray;
 
 app.on('ready', () => {
   // First, bootstrap the app
+  //const iconName = isWin ? 'penguin_heart_icon_uYg_icon.ico' : 'penguin_heart_icon_mac.png';
+  //const iconPath = Path.join(__dirname, `./assets/${iconName}`);
+  //tray = new Tray(iconPath);
+  /*tray.on('click',(event, bounds) => {
+      //console.log('click event bounds', bounds.x, bounds.y);
+      if(windows.quickReference.window && windows.quickReference.window.isVisible()){
+        //windows.quickReference.window.hide();
+        //appHide();
+      }else{
+        //windows.quickReference.window.show();
+        //appShow();
+      }
+  });*/
   // then open up a character selection window.
   popCharacterSelect();
   // boot up the quick reference window. This is the main window of the app. If this one is closed, exit the app.
@@ -22,11 +40,14 @@ app.on('ready', () => {
       width: 600,
       height: 400,
       title: 'Quick Reference',
-      frame: true
+      frame: true,
+      resizable: true,
+      show: false/*,
+      skipTaskbar: true*/
     });
+    //console.log('app qr window bounds',windows.quickReference.window.getBounds().height,windows.quickReference.window.getBounds().width);
     windows.quickReference.window.loadURL(`file://${__dirname}/templates/quick-reference.html`);
     windows.quickReference.window.on('closed',() => { windows.quickReference.window = null; appClose(); } );
-    windows.quickReference.window.hide(); // start it up hidden
   }
 });
 
@@ -58,8 +79,8 @@ let loadCharacter = function( character ){
   windows.quickReference.window.send('character:load',{'character': character});
   windows.quickReference.window.show();
   // these lines build the menu template
-  /*const mainMenu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(mainMenu);*/
+  const mainMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(mainMenu);
 };
 
 let popCharacterSelect = function(){
@@ -69,12 +90,31 @@ let popCharacterSelect = function(){
       width: 300,
       height: 400,
       title: 'Choose a Character',
-      frame: false
+      frame: false/*,
+      skipTaskbar: true*/
     });
+    //console.log('app cs window bounds',windows.characterSelect.window.getBounds().height,windows.characterSelect.window.getBounds().width);
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
     windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
   }else{
     windows.characterSelect.window.show();
+  }
+};
+
+let appHide = function(){
+  for(let i in windows){
+    if(windows.hasOwnProperty(i) && windows[i].window && windows[i].window.isVisible){
+      windows[i].active = true;
+      windows[i].window.hide();
+    }
+  }
+};
+let appShow = function(){
+  for(let i in windows){
+    if(windows.hasOwnProperty(i) && windows[i].active){
+      windows[i].active = false;
+      windows[i].window.show();
+    }
   }
 };
 
@@ -88,7 +128,7 @@ let appClose = function(){
 };
 
 // basic menu
-/*const menuTemplate = [
+const menuTemplate = [
   {
     label: 'File',
     submenu: [
@@ -108,13 +148,13 @@ let appClose = function(){
       }
     ]
   }
-];*/
+];
 // mac fix
-/*if( process.platform === 'darwin'){
+if( process.platform === 'darwin'){
   menuTemplate.unshift({});
-}*/
+}
 // dev only
-/*if( process.env.NODE_ENV !== 'production'){
+if( process.env.NODE_ENV !== 'production'){
   menuTemplate.push({
     label:'Dev',
     submenu:[
@@ -126,7 +166,7 @@ let appClose = function(){
       }
     ]
   })
-}*/
+}
 
 // SNIPPETS
 // ipcMain.on('thing:action', (event, data) => {

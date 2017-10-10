@@ -4,6 +4,7 @@ const { app, BrowserWindow, Menu, ipcMain, Tray } = electron;
 const Gun = require('gun');
 const localData = new Gun();
 const Character = require('./objects/Character.js');
+//const DndTray = require('./objects/DndTray.js');
 
 const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
@@ -15,23 +16,21 @@ let windows = {
   'description': {},
   'mainStats': {}
 };
-//let tray;
+let tray;
 
 app.on('ready', () => {
   // First, bootstrap the app
-  //const iconName = isWin ? 'penguin_heart_icon_uYg_icon.ico' : 'penguin_heart_icon_mac.png';
-  //const iconPath = Path.join(__dirname, `./assets/${iconName}`);
-  //tray = new Tray(iconPath);
-  /*tray.on('click',(event, bounds) => {
-      //console.log('click event bounds', bounds.x, bounds.y);
+  const iconName = isWin ? 'penguin_heart_icon_uYg_icon.ico' : 'penguin_heart_icon_mac.png';
+  const iconPath = Path.join(__dirname, `./assets/${iconName}`);
+  tray = new Tray(iconPath);
+  //tray = new DndTray(iconPath, windows);
+  tray.on('click',(event, bounds) => {
       if(windows.quickReference.window && windows.quickReference.window.isVisible()){
-        //windows.quickReference.window.hide();
-        //appHide();
+        appHide();
       }else{
-        //windows.quickReference.window.show();
-        //appShow();
+        appShow();
       }
-  });*/
+  });
   // then open up a character selection window.
   popCharacterSelect();
   // boot up the quick reference window. This is the main window of the app. If this one is closed, exit the app.
@@ -42,10 +41,9 @@ app.on('ready', () => {
       title: 'Quick Reference',
       frame: true,
       resizable: true,
-      show: false/*,
-      skipTaskbar: true*/
+      show: false,
+      skipTaskbar: true
     });
-    //console.log('app qr window bounds',windows.quickReference.window.getBounds().height,windows.quickReference.window.getBounds().width);
     windows.quickReference.window.loadURL(`file://${__dirname}/templates/quick-reference.html`);
     windows.quickReference.window.on('closed',() => { windows.quickReference.window = null; appClose(); } );
   }
@@ -90,8 +88,8 @@ let popCharacterSelect = function(){
       width: 300,
       height: 400,
       title: 'Choose a Character',
-      frame: false/*,
-      skipTaskbar: true*/
+      frame: false,
+      skipTaskbar: true
     });
     //console.log('app cs window bounds',windows.characterSelect.window.getBounds().height,windows.characterSelect.window.getBounds().width);
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
@@ -109,6 +107,7 @@ let appHide = function(){
     }
   }
 };
+
 let appShow = function(){
   for(let i in windows){
     if(windows.hasOwnProperty(i) && windows[i].active){
@@ -134,14 +133,14 @@ const menuTemplate = [
     submenu: [
       {
         label: 'Open Characters',
-        accelerator: process.platform === 'darwin' ? 'Command+S' : 'Ctrl+S',
+        accelerator: isMac ? 'Command+S' : 'Ctrl+S',
         click(){
           popCharacterSelect();
         }
       },
       {
         label: 'Quit',
-        accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+        accelerator: isMac ? 'Command+Q' : 'Ctrl+Q',
         click() {
           app.quit();
         }
@@ -150,7 +149,7 @@ const menuTemplate = [
   }
 ];
 // mac fix
-if( process.platform === 'darwin'){
+if( isMac ){
   menuTemplate.unshift({});
 }
 // dev only

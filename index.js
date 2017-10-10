@@ -58,8 +58,8 @@ let loadCharacter = function( character ){
   windows.quickReference.window.send('character:load',{'character': character});
   windows.quickReference.window.show();
   // these lines build the menu template
-  const mainMenu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(mainMenu);
+  /*const mainMenu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(mainMenu);*/
 };
 
 let popCharacterSelect = function(){
@@ -73,7 +73,6 @@ let popCharacterSelect = function(){
     });
     windows.characterSelect.window.loadURL(`file://${__dirname}/templates/character-select.html`);
     windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
-    //windows.characterSelect.window.on('closed',() => windows.characterSelect.window.hide() );
   }else{
     windows.characterSelect.window.show();
   }
@@ -81,13 +80,15 @@ let popCharacterSelect = function(){
 
 let appClose = function(){
   for(let i in windows){
-    windows[i].window = null;
+    if(windows.hasOwnProperty(i)){
+      windows[i].window = null;
+    }
   }
   app.quit();
 };
 
 // basic menu
-const menuTemplate = [
+/*const menuTemplate = [
   {
     label: 'File',
     submenu: [
@@ -107,13 +108,13 @@ const menuTemplate = [
       }
     ]
   }
-];
+];*/
 // mac fix
-if( process.platform === 'darwin'){
+/*if( process.platform === 'darwin'){
   menuTemplate.unshift({});
-}
+}*/
 // dev only
-if( process.env.NODE_ENV !== 'production'){
+/*if( process.env.NODE_ENV !== 'production'){
   menuTemplate.push({
     label:'Dev',
     submenu:[
@@ -125,7 +126,7 @@ if( process.env.NODE_ENV !== 'production'){
       }
     ]
   })
-}
+}*/
 
 // SNIPPETS
 // ipcMain.on('thing:action', (event, data) => {

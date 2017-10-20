@@ -4,7 +4,7 @@ const { app, BrowserWindow, Menu, ipcMain, Tray } = electron;
 const Gun = require('gun');
 const localData = new Gun();
 const Character = require('./objects/Character.js');
-//const DndTray = require('./objects/DndTray.js');
+const DndTray = require('./objects/DndTray.js');
 
 const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
@@ -22,15 +22,8 @@ app.on('ready', () => {
   // First, bootstrap the app
   const iconName = isWin ? 'penguin_heart_icon_uYg_icon.ico' : 'penguin_heart_icon_mac.png';
   const iconPath = Path.join(__dirname, `./assets/${iconName}`);
-  tray = new Tray(iconPath);
-  //tray = new DndTray(iconPath, windows);
-  tray.on('click',(event, bounds) => {
-      if(windows.quickReference.window && windows.quickReference.window.isVisible()){
-        appHide();
-      }else{
-        appShow();
-      }
-  });
+  tray = new DndTray(iconPath, windows);
+
   // then open up a character selection window.
   popCharacterSelect();
   // boot up the quick reference window. This is the main window of the app. If this one is closed, exit the app.
@@ -96,24 +89,6 @@ let popCharacterSelect = function(){
     windows.characterSelect.window.on('closed',() => windows.characterSelect.window = null );
   }else{
     windows.characterSelect.window.show();
-  }
-};
-
-let appHide = function(){
-  for(let i in windows){
-    if(windows.hasOwnProperty(i) && windows[i].window && windows[i].window.isVisible){
-      windows[i].active = true;
-      windows[i].window.hide();
-    }
-  }
-};
-
-let appShow = function(){
-  for(let i in windows){
-    if(windows.hasOwnProperty(i) && windows[i].active){
-      windows[i].active = false;
-      windows[i].window.show();
-    }
   }
 };
 

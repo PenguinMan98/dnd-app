@@ -6,15 +6,15 @@ class DndTray extends Tray{
     super( iconPath );
     //this.windows = windows;
 
-    /*this.on('click',(event, bounds) => {
+    this.on('click',(event, bounds) => {
       if(windows.quickReference.window && windows.quickReference.window.isVisible()){
         this.appHide();
       }else{
         this.appShow();
       }
-    });*/
+    });
   }
-  /*appHide(){
+  appHide(){
     let thisWindow;
     for(let i in this.windows){
       thisWindow = this.windows[i].window;
@@ -31,7 +31,7 @@ class DndTray extends Tray{
         this.windows[i].window.show();
       }
     }
-  };*/
+  };
 }
 
 module.exports = DndTray;
